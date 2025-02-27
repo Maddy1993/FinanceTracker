@@ -1,0 +1,5 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/financetracker-451021/financetracker:v1', '-f', 'docker/Dockerfile', '.']
+images:
+  - 'gcr.io/financetracker-451021/financetracker:v1'

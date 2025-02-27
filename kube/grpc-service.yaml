@@ -12,20 +12,28 @@ spec:
       labels:
         app: grpc-service
     spec:
+      imagePullSecrets:
+        - name: gcr-json-key
       containers:
         - name: grpc-service
-          image: financetracker:1.0
+          image: us-central1-docker.pkg.dev/financetracker-451021/docker-go-images/financetracker:v1
           env:
             - name: DB_HOST
-              value: "host.docker.internal"
+              value: "35.188.14.113"
             - name: DB_PORT
               value: "5432"
             - name: DB_USER
-              value: "postgres"
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
             - name: DB_PASS
-              value: "mysecret"
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
             - name: DB_NAME
-              value: "myapp_dev"
+              value: "financetracker_prod"
           ports:
             - containerPort: 50051
 ---
