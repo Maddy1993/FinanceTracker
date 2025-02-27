@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package models;
+
+option go_package = "myapp/financetracker/internal/models/";
+
+message User {
+  int64 user_id = 1;
+  string email = 2;
+  string full_name = 3;
+}
+
+message CreateUserRequest {
+  string email = 1;
+  string password = 2;
+  string full_name = 3;
+}
+
+message CreateUserResponse {
+  User user = 1;
+}
+
+service UserService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+}
