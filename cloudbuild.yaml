@@ -1,5 +1,22 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 steps:
+  # Build the container image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/financetracker-451021/financetracker:v1', '-f', 'docker/Dockerfile', '.']
-images:
-  - 'gcr.io/financetracker-451021/financetracker:v1'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/docker-go-images/financetracker:$COMMIT_SHA', '-f', 'docker/Dockerfile', '.']
+
+  # Push the container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/docker-go-images/financetracker:$COMMIT_SHA']
+
+  # Deploy container image to GKE
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'set'
+      - 'image'
+      - 'deployment/grpc-service'
+      - 'grpc-service=us-central1-docker.pkg.dev/$PROJECT_ID/docker-go-images/financetracker:$COMMIT_SHA'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=financetracker-cluster'

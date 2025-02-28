@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"log"
 
 	"gorm.io/gorm"
 	pb "myapp/financetracker/internal/models"
@@ -43,6 +43,8 @@ func (s *userServiceServer) CreateUser(ctx context.Context, req *pb.CreateUserRe
 	if err := s.db.Create(&newUser).Error; err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create user: %v", err)
 	}
+
+	log.Printf("Created user: %v", newUser)
 
 	// Convert to protobuf User
 	pbUser := &pb.User{
